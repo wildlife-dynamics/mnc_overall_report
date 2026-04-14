@@ -9967,7 +9967,7 @@ persist_leopard_urls = (
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         text=draw_leopard_map,
-        filename="cheetah_sightings_events.html",
+        filename="leopard_sightings_events.html",
         **persist_leopard_urls_params,
     )
     .call()
@@ -10583,8 +10583,8 @@ persist_cheetah_urls = (
     )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        text=draw_leopard_map,
-        filename="leopard_sightings_events.html",
+        text=draw_cheetah_map,
+        filename="cheetah_sightings_events.html",
         **persist_cheetah_urls_params,
     )
     .call()
