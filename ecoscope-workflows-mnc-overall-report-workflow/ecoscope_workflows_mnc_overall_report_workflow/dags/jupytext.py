@@ -13565,7 +13565,7 @@ persist_foot_geojson = (
     )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        df=apply_footp_colormap,
+        df=filter_foot_trajs,
         filename="foot_patrol_trajectories",
         **persist_foot_geojson_params,
     )
@@ -14026,7 +14026,7 @@ persist_vehicle_geojson = (
     )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        df=apply_vehicle_colormap,
+        df=filter_vehicles_trajs,
         filename="vehicle_patrol_trajectories",
         **persist_vehicle_geojson_params,
     )
@@ -14450,7 +14450,7 @@ persist_motor_geojson = (
     )
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        df=apply_motor_colormap,
+        df=filter_motor_trajs,
         filename="motor_patrol_trajectories",
         **persist_motor_geojson_params,
     )
@@ -15319,45 +15319,6 @@ convert_grid_png = (
 
 
 # %% [markdown]
-# ## Convert vehicle patrol map to png
-
-# %%
-# parameters
-
-convert_vehicle_png_params = dict()
-
-# %%
-# call the task
-
-
-convert_vehicle_png = (
-    html_to_png.set_task_instance_id("convert_vehicle_png")
-    .handle_errors()
-    .with_tracing()
-    .skipif(
-        conditions=[
-            any_is_empty_df,
-            any_dependency_skipped,
-        ],
-        unpack_depth=1,
-    )
-    .partial(
-        output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        html_path=persist_vehicle_urls,
-        config={
-            "full_page": False,
-            "device_scale_factor": 2.0,
-            "wait_for_timeout": 40000,
-            "max_concurrent_pages": 1,
-            "serve_local_files": True,
-        },
-        **convert_vehicle_png_params,
-    )
-    .call()
-)
-
-
-# %% [markdown]
 # ## Convert motor patrol map to png
 
 # %%
@@ -15391,6 +15352,45 @@ convert_motor_png = (
             "serve_local_files": True,
         },
         **convert_motor_png_params,
+    )
+    .call()
+)
+
+
+# %% [markdown]
+# ## Convert vehicle patrol map to png
+
+# %%
+# parameters
+
+convert_vehicle_png_params = dict()
+
+# %%
+# call the task
+
+
+convert_vehicle_png = (
+    html_to_png.set_task_instance_id("convert_vehicle_png")
+    .handle_errors()
+    .with_tracing()
+    .skipif(
+        conditions=[
+            any_is_empty_df,
+            any_dependency_skipped,
+        ],
+        unpack_depth=1,
+    )
+    .partial(
+        output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+        html_path=persist_vehicle_urls,
+        config={
+            "full_page": False,
+            "device_scale_factor": 2.0,
+            "wait_for_timeout": 40000,
+            "max_concurrent_pages": 1,
+            "serve_local_files": True,
+        },
+        **convert_vehicle_png_params,
     )
     .call()
 )

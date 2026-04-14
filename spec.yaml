@@ -5798,7 +5798,7 @@ workflow:
         - any_dependency_skipped
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      df: ${{ workflow.apply_footp_colormap.return }}
+      df: ${{ workflow.filter_foot_trajs.return }}
       filename: foot_patrol_trajectories
 
   - name: Generate foot patrol layers
@@ -6000,7 +6000,7 @@ workflow:
         - any_dependency_skipped
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      df: ${{ workflow.apply_vehicle_colormap.return }}
+      df: ${{ workflow.filter_vehicles_trajs.return }}
       filename: vehicle_patrol_trajectories
 
   - name: Generate vehicle patrol layers
@@ -6185,7 +6185,7 @@ workflow:
         - any_dependency_skipped
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      df: ${{ workflow.apply_motor_colormap.return }}
+      df: ${{ workflow.filter_motor_trajs.return }}
       filename: motor_patrol_trajectories
 
   - name: Generate motor patrol layers
@@ -6565,23 +6565,6 @@ workflow:
         wait_for_timeout: 40000
         max_concurrent_pages: 1
 
-  - name: Convert vehicle patrol map to png
-    id: convert_vehicle_png
-    task: html_to_png
-    skipif:
-      conditions:
-        - any_is_empty_df
-        - any_dependency_skipped
-    partial:
-      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      html_path: ${{ workflow.persist_vehicle_urls.return }}
-      config:
-        full_page: false
-        device_scale_factor: 2.0
-        wait_for_timeout: 40000
-        max_concurrent_pages: 1
-        serve_local_files: true
-
   - name: Convert motor patrol map to png
     id: convert_motor_png
     task: html_to_png
@@ -6592,6 +6575,23 @@ workflow:
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       html_path: ${{ workflow.persist_motor_urls.return }}
+      config:
+        full_page: false
+        device_scale_factor: 2.0
+        wait_for_timeout: 40000
+        max_concurrent_pages: 1
+        serve_local_files: true
+
+  - name: Convert vehicle patrol map to png
+    id: convert_vehicle_png
+    task: html_to_png
+    skipif:
+      conditions:
+        - any_is_empty_df
+        - any_dependency_skipped
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      html_path: ${{ workflow.persist_vehicle_urls.return }}
       config:
         full_page: false
         device_scale_factor: 2.0

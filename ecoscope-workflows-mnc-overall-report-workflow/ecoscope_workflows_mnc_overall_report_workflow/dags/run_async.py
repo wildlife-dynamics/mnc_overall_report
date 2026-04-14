@@ -662,7 +662,7 @@ def main(params: Params):
         "persist_foot_df": ["add_fp_metrics_totals"],
         "apply_footp_colormap": ["rename_foot_trajs"],
         "filter_foot_trajs": ["apply_footp_colormap"],
-        "persist_foot_geojson": ["apply_footp_colormap"],
+        "persist_foot_geojson": ["filter_foot_trajs"],
         "generate_foot_layers": ["apply_footp_colormap", "persist_foot_geojson"],
         "combine_foot_layers": [
             "create_conservancy_boundaries",
@@ -683,7 +683,7 @@ def main(params: Params):
         "persist_vehicle_df": ["add_vh_metrics_totals"],
         "apply_vehicle_colormap": ["rename_vehicle_trajs"],
         "filter_vehicles_trajs": ["apply_vehicle_colormap"],
-        "persist_vehicle_geojson": ["apply_vehicle_colormap"],
+        "persist_vehicle_geojson": ["filter_vehicles_trajs"],
         "generate_vehicle_layers": [
             "apply_vehicle_colormap",
             "persist_vehicle_geojson",
@@ -706,7 +706,7 @@ def main(params: Params):
         "persist_motor_df": ["add_mb_metrics_totals"],
         "apply_motor_colormap": ["rename_motor_trajs"],
         "filter_motor_trajs": ["apply_motor_colormap"],
-        "persist_motor_geojson": ["apply_motor_colormap"],
+        "persist_motor_geojson": ["filter_motor_trajs"],
         "generate_motor_layers": ["apply_motor_colormap", "persist_motor_geojson"],
         "combine_motor_layers": [
             "create_conservancy_boundaries",
@@ -748,8 +748,8 @@ def main(params: Params):
         "round_off_patrol": ["compute_patrol_occupancy"],
         "persist_occupancy_df": ["round_off_patrol"],
         "convert_grid_png": ["persist_grid_urls"],
-        "convert_vehicle_png": ["persist_vehicle_urls"],
         "convert_motor_png": ["persist_motor_urls"],
+        "convert_vehicle_png": ["persist_vehicle_urls"],
         "fetch_mnc_template": [],
         "generate_report": ["fetch_mnc_template", "time_range"],
         "mnc_events_dashboard": ["workflow_details", "time_range", "groupers"],
@@ -10089,7 +10089,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "df": DependsOn("apply_footp_colormap"),
+                "df": DependsOn("filter_foot_trajs"),
                 "filename": "foot_patrol_trajectories",
             }
             | (params_dict.get("persist_foot_geojson") or {}),
@@ -10414,7 +10414,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "df": DependsOn("apply_vehicle_colormap"),
+                "df": DependsOn("filter_vehicles_trajs"),
                 "filename": "vehicle_patrol_trajectories",
             }
             | (params_dict.get("persist_vehicle_geojson") or {}),
@@ -10712,7 +10712,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "df": DependsOn("apply_motor_colormap"),
+                "df": DependsOn("filter_motor_trajs"),
                 "filename": "motor_patrol_trajectories",
             }
             | (params_dict.get("persist_motor_geojson") or {}),
@@ -11325,33 +11325,6 @@ def main(params: Params):
             | (params_dict.get("convert_grid_png") or {}),
             method="call",
         ),
-        "convert_vehicle_png": Node(
-            async_task=html_to_png.validate()
-            .set_task_instance_id("convert_vehicle_png")
-            .handle_errors()
-            .with_tracing()
-            .skipif(
-                conditions=[
-                    any_is_empty_df,
-                    any_dependency_skipped,
-                ],
-                unpack_depth=1,
-            )
-            .set_executor("lithops"),
-            partial={
-                "output_dir": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "html_path": DependsOn("persist_vehicle_urls"),
-                "config": {
-                    "full_page": False,
-                    "device_scale_factor": 2.0,
-                    "wait_for_timeout": 40000,
-                    "max_concurrent_pages": 1,
-                    "serve_local_files": True,
-                },
-            }
-            | (params_dict.get("convert_vehicle_png") or {}),
-            method="call",
-        ),
         "convert_motor_png": Node(
             async_task=html_to_png.validate()
             .set_task_instance_id("convert_motor_png")
@@ -11377,6 +11350,33 @@ def main(params: Params):
                 },
             }
             | (params_dict.get("convert_motor_png") or {}),
+            method="call",
+        ),
+        "convert_vehicle_png": Node(
+            async_task=html_to_png.validate()
+            .set_task_instance_id("convert_vehicle_png")
+            .handle_errors()
+            .with_tracing()
+            .skipif(
+                conditions=[
+                    any_is_empty_df,
+                    any_dependency_skipped,
+                ],
+                unpack_depth=1,
+            )
+            .set_executor("lithops"),
+            partial={
+                "output_dir": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+                "html_path": DependsOn("persist_vehicle_urls"),
+                "config": {
+                    "full_page": False,
+                    "device_scale_factor": 2.0,
+                    "wait_for_timeout": 40000,
+                    "max_concurrent_pages": 1,
+                    "serve_local_files": True,
+                },
+            }
+            | (params_dict.get("convert_vehicle_png") or {}),
             method="call",
         ),
         "fetch_mnc_template": Node(

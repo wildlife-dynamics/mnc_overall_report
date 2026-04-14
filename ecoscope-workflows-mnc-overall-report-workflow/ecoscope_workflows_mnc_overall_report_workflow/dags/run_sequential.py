@@ -9141,7 +9141,7 @@ def main(params: Params):
         )
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            df=apply_footp_colormap,
+            df=filter_foot_trajs,
             filename="foot_patrol_trajectories",
             **(params_dict.get("persist_foot_geojson") or {}),
         )
@@ -9454,7 +9454,7 @@ def main(params: Params):
         )
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            df=apply_vehicle_colormap,
+            df=filter_vehicles_trajs,
             filename="vehicle_patrol_trajectories",
             **(params_dict.get("persist_vehicle_geojson") or {}),
         )
@@ -9740,7 +9740,7 @@ def main(params: Params):
         )
         .partial(
             root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            df=apply_motor_colormap,
+            df=filter_motor_trajs,
             filename="motor_patrol_trajectories",
             **(params_dict.get("persist_motor_geojson") or {}),
         )
@@ -10325,33 +10325,6 @@ def main(params: Params):
         .call()
     )
 
-    convert_vehicle_png = (
-        html_to_png.validate()
-        .set_task_instance_id("convert_vehicle_png")
-        .handle_errors()
-        .with_tracing()
-        .skipif(
-            conditions=[
-                any_is_empty_df,
-                any_dependency_skipped,
-            ],
-            unpack_depth=1,
-        )
-        .partial(
-            output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-            html_path=persist_vehicle_urls,
-            config={
-                "full_page": False,
-                "device_scale_factor": 2.0,
-                "wait_for_timeout": 40000,
-                "max_concurrent_pages": 1,
-                "serve_local_files": True,
-            },
-            **(params_dict.get("convert_vehicle_png") or {}),
-        )
-        .call()
-    )
-
     convert_motor_png = (
         html_to_png.validate()
         .set_task_instance_id("convert_motor_png")
@@ -10375,6 +10348,33 @@ def main(params: Params):
                 "serve_local_files": True,
             },
             **(params_dict.get("convert_motor_png") or {}),
+        )
+        .call()
+    )
+
+    convert_vehicle_png = (
+        html_to_png.validate()
+        .set_task_instance_id("convert_vehicle_png")
+        .handle_errors()
+        .with_tracing()
+        .skipif(
+            conditions=[
+                any_is_empty_df,
+                any_dependency_skipped,
+            ],
+            unpack_depth=1,
+        )
+        .partial(
+            output_dir=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            html_path=persist_vehicle_urls,
+            config={
+                "full_page": False,
+                "device_scale_factor": 2.0,
+                "wait_for_timeout": 40000,
+                "max_concurrent_pages": 1,
+                "serve_local_files": True,
+            },
+            **(params_dict.get("convert_vehicle_png") or {}),
         )
         .call()
     )
