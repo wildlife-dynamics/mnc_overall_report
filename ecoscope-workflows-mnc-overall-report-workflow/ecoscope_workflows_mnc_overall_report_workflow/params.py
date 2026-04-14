@@ -17,14 +17,6 @@ class WorkflowDetails(BaseModel):
     description: Optional[str] = Field("", title="Workflow Description")
 
 
-class GenerateReport(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    box_h_cm: Optional[float] = Field(6.5, title="Box H Cm")
-    box_w_cm: Optional[float] = Field(11.11, title="Box W Cm")
-
-
 class TimezoneInfo(BaseModel):
     label: str = Field(..., title="Label")
     tzCode: str = Field(..., title="Tzcode")
@@ -70,4 +62,3 @@ class Params(BaseModel):
         None, description="Choose the period of time to analyze.", title="Time range"
     )
     er_client_name: Optional[ErClientName] = Field(None, title="Connect to ER")
-    generate_report: Optional[GenerateReport] = Field(None, title="Generate report")

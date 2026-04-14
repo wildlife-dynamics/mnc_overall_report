@@ -74,24 +74,6 @@
       ],
       "type": "object",
       "title": "Connect to ER"
-    },
-    "generate_report": {
-      "additionalProperties": false,
-      "properties": {
-        "box_h_cm": {
-          "default": 6.5,
-          "title": "Box H Cm",
-          "type": "number"
-        },
-        "box_w_cm": {
-          "default": 11.11,
-          "title": "Box W Cm",
-          "type": "number"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Generate report"
     }
   },
   "$defs": {
@@ -152,17 +134,10 @@
         "time_format"
       ]
     },
-    "generate_report": {
-      "ui:order": [
-        "box_h_cm",
-        "box_w_cm"
-      ]
-    },
     "ui:order": [
       "workflow_details",
       "time_range",
-      "er_client_name",
-      "generate_report"
+      "er_client_name"
     ]
   },
   "additionalProperties": false

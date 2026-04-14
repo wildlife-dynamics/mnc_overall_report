@@ -15430,10 +15430,7 @@ fetch_mnc_template = (
 # %%
 # parameters
 
-generate_report_params = dict(
-    box_h_cm=...,
-    box_w_cm=...,
-)
+generate_report_params = dict()
 
 # %%
 # call the task
