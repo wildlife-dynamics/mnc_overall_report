@@ -13993,7 +13993,7 @@ filter_vehicles_trajs = (
     )
     .partial(
         df=apply_vehicle_colormap,
-        columns=["geometry", "foot_patrol_colors", "patrol_type_value"],
+        columns=["geometry", "vehicle_patrol_colors", "patrol_type_value"],
         exclude=None,
         **filter_vehicles_trajs_params,
     )
@@ -14417,7 +14417,7 @@ filter_motor_trajs = (
     )
     .partial(
         df=apply_motor_colormap,
-        columns=["geometry", "foot_patrol_colors", "patrol_type_value"],
+        columns=["geometry", "motor_patrol_colors", "patrol_type_value"],
         exclude=None,
         **filter_motor_trajs_params,
     )

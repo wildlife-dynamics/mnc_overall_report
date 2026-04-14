@@ -10391,7 +10391,7 @@ def main(params: Params):
                 "df": DependsOn("apply_vehicle_colormap"),
                 "columns": [
                     "geometry",
-                    "foot_patrol_colors",
+                    "vehicle_patrol_colors",
                     "patrol_type_value",
                 ],
                 "exclude": None,
@@ -10689,7 +10689,7 @@ def main(params: Params):
                 "df": DependsOn("apply_motor_colormap"),
                 "columns": [
                     "geometry",
-                    "foot_patrol_colors",
+                    "motor_patrol_colors",
                     "patrol_type_value",
                 ],
                 "exclude": None,

@@ -5986,7 +5986,7 @@ workflow:
       df: ${{ workflow.apply_vehicle_colormap.return }}
       columns: [
         "geometry",
-        "foot_patrol_colors",
+        "vehicle_patrol_colors",
         "patrol_type_value"
       ]
       exclude: null
@@ -6171,11 +6171,11 @@ workflow:
       df: ${{ workflow.apply_motor_colormap.return }}
       columns: [
         "geometry",
-        "foot_patrol_colors",
+        "motor_patrol_colors",
         "patrol_type_value"
       ]
       exclude: null
-      
+
   - name: Persist motor patrols as geojson
     id: persist_motor_geojson
     task: gdf_to_geojson
